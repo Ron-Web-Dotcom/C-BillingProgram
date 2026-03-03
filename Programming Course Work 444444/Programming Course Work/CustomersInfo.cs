@@ -76,19 +76,24 @@ namespace Programming_Course_Work
 
             Console.ReadLine();
 
-            StreamReader Fr;
-
-
+            try
+            {
+                StreamReader Fr;
                 Fr = File.OpenText("C:\\Users\\RON TAYLOR\\Desktop\\Computer Programing\\Customer_Information.txt");
+
                 infodisplay = Fr.ReadLine();
                 while (infodisplay != null)
                 {
-
                     Console.WriteLine(infodisplay);
                     infodisplay = Fr.ReadLine();
                 }
 
                 Fr.Close();
+            }
+            catch
+            {
+                Console.WriteLine(" file not read ");
+            }
         }
         
         public virtual void InfoDisplay()

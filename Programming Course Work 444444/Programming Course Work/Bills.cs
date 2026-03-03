@@ -64,6 +64,10 @@ namespace Programming_Course_Work
         public Bills(int water, int sewage, int service, int customer_charg)
         {
             Charge = new CompanyCharge();
+            Charge.WATER_USAGE = water;
+            Charge.SEWAGE_USAGE = sewage;
+            Charge.SERVICE_CHARGE = service;
+            Charge.CUSTOMER_CHARGE = customer_charg;
         }
 
         
@@ -79,8 +83,7 @@ namespace Programming_Course_Work
                 yc = File.AppendText("C:\\Users\\RON TAYLOR\\Desktop\\Computer Programing\\Bills.txt");
                 
 
-                yc.WriteLine(total_charges);
-                yc.WriteLine("Total charges{0}:",total_charges);
+                yc.WriteLine("Total charges: {0}", total_charges);
                 yc.Close();
             }
             catch
@@ -89,22 +92,24 @@ namespace Programming_Course_Work
             }
             Console.ReadLine();
 
-            // When im reading in the bills text 
+            // When im reading in the bills text
+            try
+            {
                 StreamReader OO;
-
-
                 OO = File.OpenText("C:\\Users\\RON TAYLOR\\Desktop\\Computer Programing\\Bills.txt");
-
 
                 while ((totalchargesdisplay = OO.ReadLine()) != null)
                 {
-
-                    Console.WriteLine();
-                    totalchargesdisplay = OO.ReadLine();
+                    Console.WriteLine(totalchargesdisplay);
                 }
 
                 OO.Close();
             }
+            catch
+            {
+                Console.WriteLine(" file not read ");
+            }
+        }
 
         }
 

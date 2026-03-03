@@ -73,7 +73,6 @@ namespace Programming_Course_Work
                 Console.WriteLine("please enter customers current reading");
                 current_meter = int.Parse(Console.ReadLine());
                 current_consumption = current_meter - previous_meter;
-                Console.ReadLine();
                 Ac.WriteLine(previous_meter);
                 Ac.WriteLine(current_meter);
                 Ac.WriteLine(current_consumption);
@@ -86,23 +85,25 @@ namespace Programming_Course_Work
 
             }
             Console.ReadLine();
-        
-            
 
-            StreamReader Bw;
-
-
-            Bw = File.OpenText("C:\\Users\\RON TAYLOR\\Desktop\\Computer Programing\\Customer_Account.txt");
-
-            Accdisplay = Bw.ReadLine();
-            while (Accdisplay!= null)
+            try
             {
+                StreamReader Bw;
+                Bw = File.OpenText("C:\\Users\\RON TAYLOR\\Desktop\\Computer Programing\\Customer_Account.txt");
 
-                Console.WriteLine(Accdisplay);
                 Accdisplay = Bw.ReadLine();
-            }
+                while (Accdisplay != null)
+                {
+                    Console.WriteLine(Accdisplay);
+                    Accdisplay = Bw.ReadLine();
+                }
 
-            Bw.Close();
+                Bw.Close();
+            }
+            catch
+            {
+                Console.WriteLine(" file not read ");
+            }
         }
              
         

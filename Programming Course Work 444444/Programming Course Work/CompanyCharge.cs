@@ -44,12 +44,12 @@ namespace Programming_Course_Work
         public int WATER_USAGE
         {
             get { return water_usage; }
-            set { water_usage = 289; }
+            set { water_usage = value; }
         }
         public int SEWAGE_USAGE
         {
             get { return sewage_usage; }
-            set { sewage_usage = 289; }
+            set { sewage_usage = value; }
         }
         public double SERVICE_CHARGE
         {
@@ -70,7 +70,7 @@ namespace Programming_Course_Work
         public double GCT
         {
             get { return gct; }
-            set { gct = 16.5; }
+            set { gct = value; }
         }
 
         public string Company()
@@ -88,8 +88,7 @@ namespace Programming_Course_Work
                 Bk = File.AppendText("C:\\Users\\RON TAYLOR\\Desktop\\Computer Programing\\Company_Charge.txt");
 
                 TOTAL_USAGE = WATER_USAGE + SEWAGE_USAGE;
-                Bk.WriteLine(total_usage);
-                Bk.WriteLine("Total usage:{0}", total_usage);
+                Bk.WriteLine("Total usage: {0}", total_usage);
                 Bk.Close();
             }
             catch
@@ -98,24 +97,26 @@ namespace Programming_Course_Work
 
             }
             Console.ReadLine();
-        
 
-        
-                    StreamReader Bo;
+            try
+            {
+                StreamReader Bo;
+                Bo = File.OpenText("C:\\Users\\RON TAYLOR\\Desktop\\Computer Programing\\Company_Charge.txt");
 
-
-                    Bo = File.OpenText("C:\\Users\\RON TAYLOR\\Desktop\\Computer Programing\\Company_Charge.txt");
-
+                TotalUsagedisplay = Bo.ReadLine();
+                while (TotalUsagedisplay != null)
+                {
+                    Console.WriteLine(TotalUsagedisplay);
                     TotalUsagedisplay = Bo.ReadLine();
-                    while (TotalUsagedisplay!= null)
-                    {
+                }
 
-                        Console.WriteLine(TotalUsagedisplay);
-                        TotalUsagedisplay = Bo.ReadLine();
-                    }
-
-                    Bo.Close();
-                   }
+                Bo.Close();
+            }
+            catch
+            {
+                Console.WriteLine(" file not read ");
+            }
+        }
                       
   
         public void SERVICECHARGE ()
@@ -126,7 +127,7 @@ namespace Programming_Course_Work
             {
                 Sc = File.AppendText("C:\\Users\\RON TAYLOR\\Desktop\\Computer Programing\\Company_Charge.txt");
 
-                //SERVICE_CHARGE = TOTAL_USAGE + (CURRENT_CONSUMPTION * 200);
+                SERVICE_CHARGE = TOTAL_USAGE + (CURRENT_CONSUMPTION * 200);
                 Sc.WriteLine(service_charge);
                 Sc.WriteLine("Service charge:{0}", service_charge);
                 Sc.Close();
@@ -138,23 +139,25 @@ namespace Programming_Course_Work
             }
                 Console.ReadLine();
 
-        
+            try
+            {
                 StreamReader Ta;
+                Ta = File.OpenText("C:\\Users\\RON TAYLOR\\Desktop\\Computer Programing\\Company_Charge.txt");
 
-
-                    Ta = File.OpenText("C:\\Users\\RON TAYLOR\\Desktop\\Computer Programing\\Company_Charge.txt");
-
-
+                servicedisplay = Ta.ReadLine();
+                while (servicedisplay != null)
+                {
+                    Console.WriteLine(servicedisplay);
                     servicedisplay = Ta.ReadLine();
-                    while (servicedisplay!= null)
-                    {
+                }
 
-                        Console.WriteLine(servicedisplay);
-                        servicedisplay = Ta.ReadLine();
-                    }
-
-                        Ta.Close();
+                Ta.Close();
             }
+            catch
+            {
+                Console.WriteLine(" file not read ");
+            }
+        }
 
          
         
