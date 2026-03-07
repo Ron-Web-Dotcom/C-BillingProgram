@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 using System.IO;
 
 namespace Programming_Course_Work
-{ // Class name Company Charge inhert from Customer Account
+{
+    // Class name Company Charge inherits from Customer Account
     class CompanyCharge : Customer_Acc
     {
-        //Company Charge Field 
-
+        // Company Charge Fields
         int water_usage;
         int sewage_usage;
         double service_charge;
@@ -19,7 +19,12 @@ namespace Programming_Course_Work
         double gct;
         string TotalUsagedisplay;
         string servicedisplay;
-        // Defualt  Parameterless  Constructor
+
+        private static readonly string DataDir = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+            "Computer Programing");
+
+        // Default Parameterless Constructor
         public CompanyCharge()
         {
             water_usage = 289;
@@ -29,10 +34,11 @@ namespace Programming_Course_Work
             total_usage = 0;
             gct = 16.5;
         }
-        //Parameter Constructor that include a base class and a dervied class 
 
-        public CompanyCharge(int current, int pervious, int consumption, int water, int sewage, int service, int customer_charg, int total, double g)
-            : base(current, pervious, consumption)
+        // Parameter Constructor including base class (Customer Account) and derived class (Company Charge)
+        // Fix: was 'pervious' — corrected to 'previous'
+        public CompanyCharge(int current, int previous, int consumption, int water, int sewage, int service, int customer_charg, int total, double g)
+            : base(current, previous, consumption)
         {
             water_usage = water;
             sewage_usage = sewage;
@@ -41,21 +47,25 @@ namespace Programming_Course_Work
             total_usage = total;
             gct = g;
         }
+
         public int WATER_USAGE
         {
             get { return water_usage; }
-            set { water_usage = 289; }
+            set { water_usage = value; }
         }
+
         public int SEWAGE_USAGE
         {
             get { return sewage_usage; }
-            set { sewage_usage = 289; }
+            set { sewage_usage = value; }
         }
+
         public double SERVICE_CHARGE
         {
             get { return service_charge; }
             set { service_charge = value; }
         }
+
         public int CUSTOMER_CHARGE
         {
             get { return customer_charge; }
@@ -67,104 +77,91 @@ namespace Programming_Course_Work
             get { return total_usage; }
             set { total_usage = value; }
         }
+
         public double GCT
         {
             get { return gct; }
-            set { gct = 16.5; }
+            set { gct = value; }
         }
 
         public string Company()
         {
-
             return water_usage + "\n" + sewage_usage + "\n" + service_charge + "\n" + customer_charge;
         }
 
         public void TOTALUSAGE()
         {
-            StreamWriter Bk;
+            // Write the total usage
             try
             {
-
-                Bk = File.AppendText("C:\\Users\\RON TAYLOR\\Desktop\\Computer Programing\\Company_Charge.txt");
-
+                Directory.CreateDirectory(DataDir);
+                StreamWriter Bk = File.AppendText(Path.Combine(DataDir, "Company_Charge.txt"));
                 TOTAL_USAGE = WATER_USAGE + SEWAGE_USAGE;
-                Bk.WriteLine(total_usage);
-                Bk.WriteLine("Total usage:{0}", total_usage);
+                Bk.WriteLine("Total usage: {0}", total_usage);
                 Bk.Close();
             }
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine(" file not writtten ");
-
+                Console.WriteLine("File not written: " + ex.Message);
             }
+
+            Console.WriteLine("Press Enter to continue...");
             Console.ReadLine();
-        
 
-        
-                    StreamReader Bo;
-
-
-                    Bo = File.OpenText("C:\\Users\\RON TAYLOR\\Desktop\\Computer Programing\\Company_Charge.txt");
-
-                    TotalUsagedisplay = Bo.ReadLine();
-                    while (TotalUsagedisplay!= null)
-                    {
-
-                        Console.WriteLine(TotalUsagedisplay);
-                        TotalUsagedisplay = Bo.ReadLine();
-                    }
-
-                    Bo.Close();
-                   }
-                      
-  
-        public void SERVICECHARGE ()
-        {
-            StreamWriter Sc;
-
+            // Read the total usage
             try
             {
-                Sc = File.AppendText("C:\\Users\\RON TAYLOR\\Desktop\\Computer Programing\\Company_Charge.txt");
+                StreamReader Bo = File.OpenText(Path.Combine(DataDir, "Company_Charge.txt"));
+                TotalUsagedisplay = Bo.ReadLine();
+                while (TotalUsagedisplay != null)
+                {
+                    Console.WriteLine(TotalUsagedisplay);
+                    TotalUsagedisplay = Bo.ReadLine();
+                }
+                Bo.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("File not read: " + ex.Message);
+            }
+        }
 
-                //SERVICE_CHARGE = TOTAL_USAGE + (CURRENT_CONSUMPTION * 200);
-                Sc.WriteLine(service_charge);
-                Sc.WriteLine("Service charge:{0}", service_charge);
+        public void SERVICECHARGE()
+        {
+            // Write the service charge
+            try
+            {
+                Directory.CreateDirectory(DataDir);
+                StreamWriter Sc = File.AppendText(Path.Combine(DataDir, "Company_Charge.txt"));
+                SERVICE_CHARGE = TOTAL_USAGE + (CURRENT_CONSUMPTION * 200);
+                // Fix: removed duplicate raw write; fixed format string spacing
+                Sc.WriteLine("Service charge: {0}", service_charge);
                 Sc.Close();
             }
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine(" file not writtten ");
-
+                Console.WriteLine("File not written: " + ex.Message);
             }
-                Console.ReadLine();
 
-        
-                StreamReader Ta;
+            Console.WriteLine("Press Enter to continue...");
+            Console.ReadLine();
 
-
-                    Ta = File.OpenText("C:\\Users\\RON TAYLOR\\Desktop\\Computer Programing\\Company_Charge.txt");
-
-
+            // Read the service charge
+            try
+            {
+                StreamReader Ta = File.OpenText(Path.Combine(DataDir, "Company_Charge.txt"));
+                servicedisplay = Ta.ReadLine();
+                while (servicedisplay != null)
+                {
+                    Console.WriteLine(servicedisplay);
                     servicedisplay = Ta.ReadLine();
-                    while (servicedisplay!= null)
-                    {
-
-                        Console.WriteLine(servicedisplay);
-                        servicedisplay = Ta.ReadLine();
-                    }
-
-                        Ta.Close();
+                }
+                Ta.Close();
             }
-
-         
-        
+            catch (Exception ex)
+            {
+                Console.WriteLine("File not read: " + ex.Message);
+            }
+        }
     }
- }
-
-
-     
-        
-    
-
-
-
+}
