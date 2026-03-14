@@ -68,15 +68,37 @@ namespace Programming_Course_Work
             return current_meter + "\n" + previous_meter + "\n" + current_consumption;
         }
 
+        // ---------------------------------------------------------------
+        // Feature: validated integer input — loops until user enters a
+        // valid non-negative whole number, preventing FormatException crashes
+        // ---------------------------------------------------------------
+        private static int ReadInt(string prompt)
+        {
+            while (true)
+            {
+                Console.Write(prompt);
+                if (int.TryParse(Console.ReadLine(), out int result) && result >= 0)
+                    return result;
+                Console.WriteLine("  Invalid input — please enter a whole number.");
+            }
+        }
+
         // Method to Display in Main
         // Fix: user input is now read before opening the file, preventing file handle leaks
         //      on bad input and giving an accurate error message if the write fails
         public void CustomersAccount()
         {
-            Console.WriteLine("Please enter customers previous reading");
-            previous_meter = int.Parse(Console.ReadLine());
-            Console.WriteLine("Please enter customers current reading");
-            current_meter = int.Parse(Console.ReadLine());
+            previous_meter = ReadInt("Please enter customers previous reading: ");
+
+            // Feature: meter reading validation — current must be >= previous
+            do
+            {
+                current_meter = ReadInt("Please enter customers current reading : ");
+                if (current_meter < previous_meter)
+                    Console.WriteLine("  Current reading cannot be less than the previous reading.");
+            }
+            while (current_meter < previous_meter);
+
             current_consumption = current_meter - previous_meter;
 
             try

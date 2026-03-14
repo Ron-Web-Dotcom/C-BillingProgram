@@ -60,16 +60,30 @@ namespace Programming_Course_Work
             return customernumber + "\n" + customername + "\n" + address;
         }
 
+        // ---------------------------------------------------------------
+        // Feature: validated integer input — loops until user enters a
+        // valid non-negative whole number, preventing FormatException crashes
+        // ---------------------------------------------------------------
+        private static int ReadInt(string prompt)
+        {
+            while (true)
+            {
+                Console.Write(prompt);
+                if (int.TryParse(Console.ReadLine(), out int result) && result >= 0)
+                    return result;
+                Console.WriteLine("  Invalid input — please enter a whole number.");
+            }
+        }
+
         // Method to Display in Main
         // Fix: user input is now read before opening the file, preventing file handle leaks
         //      on bad input and giving an accurate error message if the write fails
         public void CustomerDisplay()
         {
-            Console.WriteLine("Please enter customer number");
-            customernumber = int.Parse(Console.ReadLine());
-            Console.WriteLine("Please enter customer name");
+            customernumber = ReadInt("Please enter customer number  : ");
+            Console.Write(          "Please enter customer name    : ");
             customername = Console.ReadLine();
-            Console.WriteLine("Please enter customer address");   // Fix: was "there" (wrong word)
+            Console.Write(          "Please enter customer address : ");
             address = Console.ReadLine();
 
             try
