@@ -7,44 +7,54 @@ using System.IO;
 
 namespace Programming_Course_Work
 {
-    // Bills Class Created
+    // Composition class: ties together CustomersInfo, Customer_Acc, and CompanyCharge
+    // to produce a complete bill. Calculates the grand total (including GCT),
+    // prints a formatted bill to the console, and saves it to a timestamped file.
     class Bills
     {
-        // Fields
-        double total_charges;
-        string totalchargesdisplay;
+        // --- Fields ---
+        double total_charges;        // grand total after GCT is applied
+        string totalchargesdisplay;  // temporary buffer for reading Bills.txt back to console
 
+        // Portable output directory shared by all classes in this project.
         private static readonly string DataDir = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
             "Computer Programing");
 
-        // Default Parameterless Constructor
+        // Default constructor — zeroes the total.
         public Bills()
         {
             total_charges = 0;
         }
 
-        // Parameter Constructor
+        // Constructor for a total-only record (no composition objects populated).
         public Bills(int totalcharge)
         {
             total_charges = totalcharge;
         }
 
-        // Property of Bills
+        // --- Property ---
+
+        // Grand total due after GCT. Set by CalculateTotal().
         public double TOTAL_CHARGE
         {
             get { return total_charges; }
             set { total_charges = value; }
         }
 
-        // Composition creating method for Information
+        // --- Composition: customer identity ---
+
+        // Holds the customer's number, name, and address.
         public CustomersInfo Info;
 
+        // Constructor that populates the Info composition object only.
         public Bills(int customernum, string nam, string add)
         {
             Info = new CustomersInfo(customernum, nam, add);
         }
 
+        // Returns customer identity as a newline-separated string, or an error message
+        // if the Info object has not been initialised.
         public string Bill01()
         {
             if (Info == null)
@@ -52,15 +62,20 @@ namespace Programming_Course_Work
             return Info.CustomerInfo01();
         }
 
-        // Composition creating method for Account
+        // --- Composition: meter readings ---
+
+        // Holds previous/current readings and computed consumption.
         public Customer_Acc Accnt;
 
-        // Fix: was passing (previous, current) but Customer_Acc expects (cur, prev) — swapped
+        // Constructor that populates the Accnt composition object only.
+        // Parameters are (previous, current, consumption); Customer_Acc expects (current, previous, consumption).
         public Bills(int previous, int current, int consumption)
         {
             Accnt = new Customer_Acc(current, previous, consumption);
         }
 
+        // Returns meter readings as a newline-separated string, or an error message
+        // if the Accnt object has not been initialised.
         public string Bills02()
         {
             if (Accnt == null)
@@ -68,9 +83,12 @@ namespace Programming_Course_Work
             return Accnt.Account_info();
         }
 
-        // Composition creating method for Company Charge
+        // --- Composition: company charges ---
+
+        // Holds tariff fields (water, sewage, service charge, customer charge, GCT).
         public CompanyCharge Charge;
 
+        // Constructor that populates the Charge composition object only.
         public Bills(int water, int sewage, int service, int customer_charg)
         {
             Charge = new CompanyCharge();
@@ -80,6 +98,8 @@ namespace Programming_Course_Work
             Charge.CUSTOMER_CHARGE = customer_charg;
         }
 
+        // Appends total_charges to Bills.txt and reads the file back to the console.
+        // Guards against an uninitialised Charge object before writing.
         public void Bills03()
         {
             if (Charge == null)
@@ -88,7 +108,6 @@ namespace Programming_Course_Work
                 return;
             }
 
-            // Write the bills text
             try
             {
                 Directory.CreateDirectory(DataDir);
@@ -104,7 +123,6 @@ namespace Programming_Course_Work
             Console.WriteLine("Press Enter to continue...");
             Console.ReadLine();
 
-            // Read the bills text
             try
             {
                 StreamReader OO = File.OpenText(Path.Combine(DataDir, "Bills.txt"));
@@ -120,11 +138,9 @@ namespace Programming_Course_Work
             }
         }
 
-        // ---------------------------------------------------------------
-        // Feature: Full single-call constructor
-        // Wires all three composition objects together and calculates the
-        // complete bill (including GCT) in one step.
-        // ---------------------------------------------------------------
+        // Full single-call constructor: wires all three composition objects and calculates
+        // the complete bill (service charge + customer charge + GCT) in one step.
+        // Used by GenerateFullBill() in Program.cs (menu option 4).
         public Bills(int customernum, string name, string address,
                      int previous, int current,
                      int water, int sewage, int customerCharge)
@@ -147,10 +163,10 @@ namespace Programming_Course_Work
             CalculateTotal();
         }
 
-        // ---------------------------------------------------------------
-        // Feature: CalculateTotal — applies GCT to produce grand total
-        // GCT (16.5%) was stored on CompanyCharge but never used anywhere.
-        // ---------------------------------------------------------------
+        // Applies GCT to produce the grand total.
+        // Formula: subtotal = SERVICE_CHARGE + CUSTOMER_CHARGE
+        //          GCT amount = subtotal × (GCT% / 100)
+        //          total_charges = subtotal + GCT amount
         public void CalculateTotal()
         {
             if (Charge == null) return;
@@ -159,9 +175,8 @@ namespace Programming_Course_Work
             total_charges    = subtotal + gctAmount;
         }
 
-        // ---------------------------------------------------------------
-        // Feature: PrintFormattedBill — formatted bill to the console
-        // ---------------------------------------------------------------
+        // Prints a formatted bill to the console with separator lines and labelled rows.
+        // Requires Info, Accnt, and Charge to all be populated for a complete display.
         public void PrintFormattedBill()
         {
             string sep = new string('-', 46);
@@ -207,9 +222,8 @@ namespace Programming_Course_Work
             Console.WriteLine(sep);
         }
 
-        // ---------------------------------------------------------------
-        // Feature: SaveBill — writes a formatted bill to a timestamped file
-        // ---------------------------------------------------------------
+        // Writes a formatted bill to a timestamped file: Bill_Customer{N}_{yyyyMMdd_HHmmss}.txt
+        // Uses a 'using' block to guarantee the StreamWriter is closed even if an exception is thrown.
         public void SaveBill()
         {
             try

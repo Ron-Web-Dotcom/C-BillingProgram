@@ -4,9 +4,11 @@ using System.Linq;
 
 namespace Programming_Course_Work
 {
+    // Application entry point. Presents an 8-option menu and dispatches to the
+    // appropriate workflow. All data files are written to DataDir on the Desktop.
     class Program
     {
-        // Central output directory — shared by all methods in this file
+        // Portable path to the shared output folder — same directory used by all classes.
         private static readonly string DataDir = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
             "Computer Programing");
@@ -63,9 +65,9 @@ namespace Programming_Course_Work
             }
         }
 
-        // ---------------------------------------------------------------
-        // Feature: Generate a complete bill in one guided workflow
-        // ---------------------------------------------------------------
+        // Guided single-session workflow that collects all customer, meter, and charge data,
+        // calculates the full bill (including GCT), prints it to the console, and saves it
+        // to a timestamped file via Bills.SaveBill().
         static void GenerateFullBill()
         {
             Console.WriteLine("============================================");
@@ -88,6 +90,7 @@ namespace Programming_Course_Work
             }
             while (current < previous);
 
+            // Water and sewage usage default to $289 — press Enter to accept the default.
             int water          = ReadIntWithDefault("Enter water usage charge    (Enter = 289): ", 289);
             int sewage         = ReadIntWithDefault("Enter sewage usage charge   (Enter = 289): ", 289);
             int customerCharge = ReadInt(           "Enter customer charge                   : ");
@@ -101,9 +104,7 @@ namespace Programming_Course_Work
             Pause();
         }
 
-        // ---------------------------------------------------------------
-        // Feature: Browse and display all saved bill files
-        // ---------------------------------------------------------------
+        // Lists all Bill_Customer*.txt files in DataDir and lets the user pick one to view.
         static void ViewSavedBills()
         {
             Console.WriteLine("============================================");
@@ -124,9 +125,8 @@ namespace Programming_Course_Work
             Pause();
         }
 
-        // ---------------------------------------------------------------
-        // Feature: Filter saved bills to a specific customer number
-        // ---------------------------------------------------------------
+        // Filters saved bills to a specific customer number using the
+        // Bill_Customer{N}_*.txt filename convention, then lets the user view one.
         static void SearchBillsByCustomer()
         {
             Console.WriteLine("============================================");
@@ -166,9 +166,8 @@ namespace Programming_Course_Work
             Pause();
         }
 
-        // ---------------------------------------------------------------
-        // Feature: Remove a specific saved bill (requires YES confirmation)
-        // ---------------------------------------------------------------
+        // Lists all saved bills and permanently deletes the one chosen by the user.
+        // Requires the user to type "YES" to confirm before deletion proceeds.
         static void DeleteABill()
         {
             Console.WriteLine("============================================");
@@ -209,9 +208,9 @@ namespace Programming_Course_Work
             Pause();
         }
 
-        // ---------------------------------------------------------------
-        // Feature: Wipe every .txt data file (requires typed YES confirmation)
-        // ---------------------------------------------------------------
+        // Lists every .txt file in DataDir and deletes all of them after typed "YES" confirmation.
+        // This wipes Customer_Information.txt, Customer_Account.txt, Company_Charge.txt,
+        // Bills.txt, and all timestamped bill files.
         static void ClearAllRecords()
         {
             Console.WriteLine("============================================");
@@ -260,11 +259,10 @@ namespace Programming_Course_Work
             Pause();
         }
 
-        // ---------------------------------------------------------------
-        // Shared helpers
-        // ---------------------------------------------------------------
+        // --- Shared helpers ---
 
-        // Returns all Bill_Customer*.txt files sorted by name, or null if none.
+        // Returns all Bill_Customer*.txt files in DataDir sorted by name,
+        // or null (after printing a message) if none exist.
         static string[] GetBillFiles()
         {
             if (!Directory.Exists(DataDir))
@@ -288,6 +286,7 @@ namespace Programming_Course_Work
             return files;
         }
 
+        // Prints a 1-based numbered list of file names (no directory path).
         static void PrintFileList(string[] files)
         {
             Console.WriteLine(new string('-', 55));
@@ -296,13 +295,14 @@ namespace Programming_Course_Work
             Console.WriteLine(new string('-', 55));
         }
 
+        // Pauses the console until the user presses Enter, then returns to the menu loop.
         static void Pause()
         {
             Console.WriteLine("\nPress Enter to return to the menu...");
             Console.ReadLine();
         }
 
-        // Read a required non-negative integer — loops until valid.
+        // Loops until the user enters a valid non-negative integer.
         static int ReadInt(string prompt)
         {
             while (true)
@@ -314,7 +314,8 @@ namespace Programming_Course_Work
             }
         }
 
-        // Read a non-negative integer; pressing Enter returns defaultValue.
+        // Loops until the user enters a valid non-negative integer or presses Enter.
+        // Pressing Enter returns defaultValue (used for optional fields like water/sewage tariff).
         static int ReadIntWithDefault(string prompt, int defaultValue)
         {
             while (true)

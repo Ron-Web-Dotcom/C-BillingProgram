@@ -7,24 +7,28 @@ using System.IO;
 
 namespace Programming_Course_Work
 {
-    // Class name Company Charge inherits from Customer Account
+    // Derived class (inherits Customer_Acc → CustomersInfo): adds tariff fields and GCT rate.
+    // Calculates total usage, service charge, and holds all the charge components
+    // that Bills uses to produce the final invoice.
     class CompanyCharge : Customer_Acc
     {
-        // Company Charge Fields
-        int water_usage;
-        int sewage_usage;
-        double service_charge;
-        int customer_charge;
-        int total_usage;
-        double gct;
-        string TotalUsagedisplay;
-        string servicedisplay;
+        // --- Fields ---
+        int water_usage;         // fixed water usage tariff amount ($)
+        int sewage_usage;        // fixed sewage usage tariff amount ($)
+        double service_charge;   // computed: total_usage + (consumption × $200)
+        int customer_charge;     // flat per-customer levy
+        int total_usage;         // water_usage + sewage_usage (computed in TOTALUSAGE)
+        double gct;              // General Consumption Tax rate (default 16.5%)
+        string TotalUsagedisplay; // temporary buffer for file read-back
+        string servicedisplay;    // temporary buffer for file read-back
 
+        // Portable output directory shared by all classes in this project.
         private static readonly string DataDir = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
             "Computer Programing");
 
-        // Default Parameterless Constructor
+        // Default constructor — sets standard tariff defaults.
+        // Water and sewage usage default to $289 each; GCT defaults to 16.5%.
         public CompanyCharge()
         {
             water_usage = 289;
@@ -35,9 +39,9 @@ namespace Programming_Course_Work
             gct = 16.5;
         }
 
-        // Parameter Constructor including base class (Customer Account) and derived class (Company Charge)
-        // Fix: was 'pervious' — corrected to 'previous'
-        public CompanyCharge(int current, int previous, int consumption, int water, int sewage, int service, int customer_charg, int total, double g)
+        // Full constructor — wires all charge fields plus the inherited meter fields.
+        public CompanyCharge(int current, int previous, int consumption,
+                             int water, int sewage, int service, int customer_charg, int total, double g)
             : base(current, previous, consumption)
         {
             water_usage = water;
@@ -48,50 +52,60 @@ namespace Programming_Course_Work
             gct = g;
         }
 
+        // --- Properties ---
+
+        // Fixed water tariff amount. Defaults to $289 per period.
         public int WATER_USAGE
         {
             get { return water_usage; }
             set { water_usage = value; }
         }
 
+        // Fixed sewage tariff amount. Defaults to $289 per period.
         public int SEWAGE_USAGE
         {
             get { return sewage_usage; }
             set { sewage_usage = value; }
         }
 
+        // Computed service charge: total_usage + (consumption × $200).
         public double SERVICE_CHARGE
         {
             get { return service_charge; }
             set { service_charge = value; }
         }
 
+        // Flat per-customer levy added to the subtotal.
         public int CUSTOMER_CHARGE
         {
             get { return customer_charge; }
             set { customer_charge = value; }
         }
 
+        // Sum of water_usage + sewage_usage (computed by TOTALUSAGE).
         public int TOTAL_USAGE
         {
             get { return total_usage; }
             set { total_usage = value; }
         }
 
+        // General Consumption Tax percentage. Default 16.5%. Applied in Bills.CalculateTotal().
         public double GCT
         {
             get { return gct; }
             set { gct = value; }
         }
 
+        // Returns the four charge fields as a newline-separated string.
         public string Company()
         {
             return water_usage + "\n" + sewage_usage + "\n" + service_charge + "\n" + customer_charge;
         }
 
+        // Computes total_usage = water + sewage, appends it to Company_Charge.txt,
+        // then reads the file back to confirm the record. Called by menu option 3.
         public void TOTALUSAGE()
         {
-            // Write the total usage
             try
             {
                 Directory.CreateDirectory(DataDir);
@@ -108,7 +122,6 @@ namespace Programming_Course_Work
             Console.WriteLine("Press Enter to continue...");
             Console.ReadLine();
 
-            // Read the total usage
             try
             {
                 StreamReader Bo = File.OpenText(Path.Combine(DataDir, "Company_Charge.txt"));
@@ -126,15 +139,16 @@ namespace Programming_Course_Work
             }
         }
 
+        // Computes SERVICE_CHARGE = total_usage + (consumption × $200),
+        // appends the result to Company_Charge.txt, then reads the file back.
+        // Must be called AFTER TOTALUSAGE() so total_usage is populated.
         public void SERVICECHARGE()
         {
-            // Write the service charge
             try
             {
                 Directory.CreateDirectory(DataDir);
                 StreamWriter Sc = File.AppendText(Path.Combine(DataDir, "Company_Charge.txt"));
                 SERVICE_CHARGE = TOTAL_USAGE + (CURRENT_CONSUMPTION * 200);
-                // Fix: removed duplicate raw write; fixed format string spacing
                 Sc.WriteLine("Service charge: {0}", service_charge);
                 Sc.Close();
             }
@@ -146,7 +160,6 @@ namespace Programming_Course_Work
             Console.WriteLine("Press Enter to continue...");
             Console.ReadLine();
 
-            // Read the service charge
             try
             {
                 StreamReader Ta = File.OpenText(Path.Combine(DataDir, "Company_Charge.txt"));
